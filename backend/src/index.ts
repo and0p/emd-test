@@ -1,9 +1,12 @@
 import express from 'express';
+const cors = require('cors');
 
 import { validateCreditCardController } from './Controllers/CCValidator';
 
 const app = express()
 const port = 3000
+
+app.use(cors());
 
 app.use(express.json());
 

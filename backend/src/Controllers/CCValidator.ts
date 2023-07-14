@@ -8,7 +8,10 @@ export const validateCreditCardController = (req: Request<{ creditCardNumber: st
 
         // Ensure that the parameter passed in was a string
         if (typeof cc !== 'string') {
-            res.status(400).send('Expected a string for creditCardNumber.');
+            res.status(400).json({
+                valid: false,
+                failureReasons: ['Expected a string for creditCardNumber.']
+            });
             return;
         }
     
@@ -18,7 +21,7 @@ export const validateCreditCardController = (req: Request<{ creditCardNumber: st
         res.status(validationResult.valid ? 200 : 400).json(validationResult);
         return;
     } catch (err: any) {
-        res.status(500).send();
+        res.status(500).end();
         return;
     }
 }

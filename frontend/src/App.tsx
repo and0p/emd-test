@@ -1,33 +1,37 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 
+import { validateCreditCard } from './Services/CreditCardValidator'; 
+
 function App() {
-  const [count, setCount] = useState(0)
+  const [creditCardNumber, setCreditCardNumber] = useState("")
+  const [errors, setErrors] = useState<string[]>([]);
+  const [valid, setValid] = useState<boolean | undefined>();
+
+  const handleInputUpdate = (event: any) => {
+    setValid(undefined);
+    setErrors([]);
+    setCreditCardNumber(event.target.value);
+  }
+
+  const handleValidation = (res: any) => {
+    if (res.valid) {
+      setErrors([]);
+      setValid(true);
+    } else {
+      setValid(false);
+      setErrors(res.failureReasons || [])
+    }
+  }
 
   return (
     <>
       <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        <input type="text" maxLength={16} value={creditCardNumber} onChange={event => handleInputUpdate(event)}/>
+        <button onClick={() => { validateCreditCard(creditCardNumber).then(res => handleValidation(res)) }}>Validate</button>
+        {valid && <span style={{"color":"#00FF00"}}><br/>Valid!</span>}
+        {errors.map(error => <span style={{"color":"#FF0000"}}><br/>{error}</span>)}
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
   )
 }
